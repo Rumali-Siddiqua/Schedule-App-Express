@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Mr. Coffee - Schedule Website</title>
+    <meta name="description" content="Check here your work schedule">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/css/application.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo&family=Nunito+Sans:wght@600;800;900&display=swap" rel="stylesheet">
+</head>
+<body>    
+    <%- include('../includes/header') %>
+    <section> 
+        <h3>List of Schedules:</h3>
+        <table class="table">
+            <thead>
+                <tr>                
+                    <th scope="col">Name</th>
+                    <th scope="col">Day</th>
+                    <th scope="col">Starts at</th>
+                    <th scope="col">Ends at</th>
+                </tr>
+            </thead>
+            <tbody>
+        <% for (let i=0; i<schedules.length; i++) { %>
+            <tr>
+                <td scope="row"><%=users[schedules[i].user_id].firstname%>&nbsp;<%=users[schedules[i].user_id].lastname%></td>
+                <td scope="row">
+               <% switch (schedules[i].day) {
+                    case 1: %>Monday<% break;
+                    case 2: %>Tuesday<% break;
+                    case 3: %>Wednesday<% break;
+                    case 4: %>Thursday<% break;
+                    case 5: %>Friday<% break;
+                    case 6: %>Saturday<% break;
+                    case 7: %>Sunday<% break;
+                    default: %><%=schedules[i].day %><%                     
+                } %></td>
+                <td scope="row"><%=schedules[i].start_at%></td>
+                <td scope="row"><%=schedules[i].end_at%></td>
+            </tr>
+        <% } %>      
+            </tbody>
+            </table>
+    </section>
+    <%- include('../includes/footer') %>
+</body>
+</html>

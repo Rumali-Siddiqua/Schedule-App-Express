@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Mr. Coffee - Schedule Website</title>
+    <meta name="description" content="Check here your work schedule">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">        
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/css/application.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo&family=Nunito+Sans:wght@600;800;900&display=swap" rel="stylesheet">
+</head>
+<body>    
+    <%- include('../includes/header') %>
+    <section> 
+        <h3>New Schedule:</h3>
+            <form action="/schedules/new" method="POST">      
+                <div class="mb-3 col-3">                                  
+                    <label for="user_id" class="form-label">User ID *</label>
+                    <select id="user_id" name="user_id" class="form-select">
+                    <% for (let i=0; i<users.length; i++) { %>
+                        <option value="<%=i%>"><%=users[i].firstname%>&nbsp;<%=users[i].lastname%></option>
+                    <% } %>
+                    </select>
+                </div>
+                <div class="mb-3 col-2">      
+                    <label for="day" class="form-label">Day *</label>
+                    <select id="day" name="day" class="form-select">
+                        <option value="1">Monday</option>
+                        <option value="2">Tuesday</option>
+                        <option value="3">Wednesday</option>
+                        <option value="4">Thursday</option>
+                        <option value="5">Friday</option>
+                        <option value="6">Saturday</option>
+                        <option value="7">Sunday</option>
+                    </select>           
+                </div>
+                <div class="mb-3 col-2">         
+                    <label for="start_at" class="form-label">Starts at *</label>                   
+                    <input id="start_at" type="time" name="start_at" class="form-control"  value="00:00:00">
+                </div>
+                <div class="mb-3 col-2">         
+                    <label for="end_at" class="form-label">Ends at *</label>
+                    <input id="end_at" type="time" name="end_at" class="form-control"  value="00:00:00">
+                </div>      
+                <div class="mb-3 col-4">                                           
+                    <button type="submit" class="btn btn-secondary col-4">Save</button>
+                </div>
+            </form>
+    </section> 
+    <%- include('../includes/footer') %>
+</body>
+</html>
