@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Mr. Coffee - Schedule Website</title>
+    <meta name="description" content="Check here your work schedule">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/css/application.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo&family=Nunito+Sans:wght@600;800;900&display=swap" rel="stylesheet">
+</head>
+<body>    
+    <%- include('../includes/header') %>
+    <section> 
+        <h3>List of Users:</h3>
+        <table class="table">
+            <thead>
+                <tr>                
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                </tr>
+            </thead>
+            <tbody>
+            <% for (let i=0; i<users.length; i++) { %>
+                <tr>
+                    <td scope="row"><%=users[i].firstname%></td>
+                    <td scope="row"><%=users[i].lastname%></td>
+                    <td scope="row"><%=users[i].email%></td>
+                </tr>
+            <% } %>    
+            </tbody>
+        </table>
+    </section>
+    <%- include('../includes/footer') %>
+</body>
+</html>
