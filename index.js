@@ -31,10 +31,10 @@ app.get('/users/:user_id', (req, res) => {
 })
 
 // Returns the schedules of a specific user
-app.get('/users/:Cat/schedules', (req, res) => {       
+app.get('/users/:user_id/schedules', (req, res) => {       
   let response = ""
   for (let i=0; i<data.schedules.length; i++) {
-      if (data.schedules[i].user_id == req.params.Cat) {
+      if (data.schedules[i].user_id == req.params.user_id) {
           response += JSON.stringify(data.schedules[i])+"<br>"
       }
   }
