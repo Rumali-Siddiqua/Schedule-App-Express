@@ -3,39 +3,58 @@ const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3000
 
+// Encryption: SHA256
+const crypto = require('crypto');
+
+// DB setup
+const db = require('./database')
+
 // body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// access to data.js file
-const data = require('./data.js')
+// static assets
 app.use(express.static('public'))
 
 // Template: EJS
 app.set('view engine', 'ejs')
 
-//routes
+// Routes
+// Home
 app.get('/', (req, res) => {
     res.render('pages/index')
 })
 
+// Returns all users
 app.get('/users', (req, res) => {
-    res.render('pages/list_users', {
-        users: data.users
+    db.any('SELECT firstname, lastname, email FROM users;')
+    .then((data) => {
+        res.render('pages/list_users', {
+            users: data
+        })
+    })
+    .catch((err) => {
+        res.send(err)  
     })
 })
 
-// add a new user and display the page
+
+// Displays the page to add a new user
 app.get('/users/new', (req, res) => {        
     res.render('pages/new_user')
 })
 
 // Adds an user 
-app.post('/users/new', (req, res) => {    
+ app.post('/users/new', (req, res) => {    
     req.body.password = crypto.createHash('sha256').update(req.body.password).digest('base64')
-    data.users.push(req.body)    
-    res.redirect('/users')
-    
+    db.any('INSERT INTO users (firstname, lastname, email, password) VALUES ($1, $2, $3, $4);', 
+        [req.body.firstname, req.body.lastname, req.body.email, req.body.password])
+    .then(() => {
+        res.redirect('/users')
+    })
+    .catch((err) => {
+        res.send(err)  
+    })    
 })
 
 // Returns 1 user based on user_id 
@@ -47,10 +66,17 @@ app.get('/users/:user_id', (req, res) => {
 
 // Returns all schedules
 app.get('/schedules', (req, res) => {
-    res.render('pages/list_schedules', {
-        users: data.users,
-        schedules: data.schedules
+    db.any('SELECT firstname, lastname, day, to_char(start_at,\'fmHH12:MI AM\') as start_at, \
+        to_char(end_at,\'fmHH12:MI AM\') as end_at \
+        FROM users, schedules where users.id = user_id order by firstname, day;')
+    .then((data) => {
+        res.render('pages/list_schedules', {
+            schedules: data
+        })
     })
+    .catch((err) => {
+        res.send(err)  
+    })    
 })
 
 // Returns the schedules of a specific user
@@ -67,40 +93,29 @@ app.get('/users/:user_id/schedules', (req, res) => {
   })
 
 // Displays the page to add a new schedule
-app.get('/schedules/new', (req, res) => {        
-    res.render('pages/new_schedule', {
-        users: data.users
+app.get('/schedules/new', (req, res) => {     
+    db.any('SELECT id, firstname, lastname FROM users order by firstname;')
+    .then((data) => {   
+        res.render('pages/new_schedule', {
+            users: data
+        })
     })
 })
 
 // Adds a new schedule 
- app.post('/schedules/new', (req, res) => { 
+ app.post('/schedules/new', (req, res) => {    
     req.body.user_id = Number(req.body.user_id)
     req.body.day = Number(req.body.day)
-
-    var d = new Date()    
-    d.setHours(req.body.start_at.substring(0, 2), req.body.start_at.substring(3, 5));
-    req.body.start_at = formatAMPM(d)
-        
-    d.setHours(req.body.end_at.substring(0, 2), req.body.end_at.substring(3, 5));
-    req.body.end_at = formatAMPM(d)
-
-    data.schedules.push(req.body) 
-    res.redirect('/schedules')
-    
+    db.any('INSERT INTO schedules (user_id, day, start_at, end_at) VALUES ($1, $2, $3, $4);', 
+        [req.body.user_id, req.body.day, req.body.start_at, req.body.end_at])
+    .then(() => {
+        res.redirect('/schedules')
+    })
+    .catch((err) => {
+        res.send(err)  
+    })    
 })
 
 app.listen(PORT, () => {
-    console.log(`Project 3B listening at http://localhost:${PORT}`)
+    console.log(`Project 3C listening at http://localhost:${PORT}`)
 })
-
-function formatAMPM(date) {
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0'+minutes : minutes;
-    var strTime = hours + ':' + minutes + ampm;
-    return strTime;
-}
